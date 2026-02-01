@@ -97,8 +97,38 @@ npx playwright test
 
 ---
 
-## License & contact 📬
-- MIT — free to reuse and extend  
-For questions or help extending the initializer, open an issue or contribute a PR.
+
+## CLI Reference — Nebula CLI (bin/cli.ts) 🛠️
+
+Nebula ships a CLI implemented at `bin/cli.ts` (built with commander, chalk, ora, fs-extra and inquirer). The CLI provides fast scaffolding and workspace utilities to manage a Nebula project.
+
+Available commands
+- scan (alias: s)  
+  - Performs a deep integrity scan (pages, tests, Playwright config, package.json) and prints a health report.
+  - Example: nebula scan
+
+- create-page <Name> (alias: cp)  
+  - Generates a locator-only Page class and an isolated test folder with a starter spec.
+  - Creates: `pages/<Name>/<Name>.ts` and `tests/<Name>/<Name>.spec.ts` (uses project Actions & Assertions in the template).
+  - Example: nebula create-page Login
+
+- status  
+  - Quick health check for required folders (pages, actions, assertions, utility, tests).
+  - Example: nebula status
+
+- remove <Name>  
+  - Prompts for confirmation and removes a specific page and its isolated test folder.
+  - Example: nebula remove Login
+
+- clean  
+  - Hard-reset helper that (after confirmation) empties workspace content under `pages`, `tests`, `reporting`, and `test-results` while preserving the folder structure.
+  - Example: nebula clean
+
+Notes
+- The CLI prints a decorative banner (credit shown in the banner) — designed and developed by Mustufa Qureshi and Abdul Kader Javed Qureshi.
+- The CLI templates reference `Actions` and `Assert` helper classes — keep those global helpers in `actions/` and `assertions/` to ensure generated tests are ready-to-run.
+- The setup script (`npm run setup`) will wire required runtime pieces and install CLI dependencies so the CLI behaves as expected across environments.
+
+-- end of CLI Reference --
 
 Happy testing! 🚀
