@@ -125,7 +125,7 @@ Available commands
   - Example: nebula clean
 
 Notes
-- The CLI prints a decorative banner (credit shown in the banner) — designed and developed by Mustufa Qureshi and Abdul Kader Javed Qureshi.
+- The CLI prints a decorative banner (credit shown in the banner) — designed and developed by  Abdul Kader Javed Qureshi.
 - The CLI templates reference `Actions` and `Assert` helper classes — keep those global helpers in `actions/` and `assertions/` to ensure generated tests are ready-to-run.
 - The setup script (`npm run setup`) will wire required runtime pieces and install CLI dependencies so the CLI behaves as expected across environments.
 
