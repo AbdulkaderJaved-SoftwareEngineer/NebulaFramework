@@ -1,149 +1,107 @@
-# NebulaFramework
-🌌 Nebula: An enterprise-grade, TypeScript-first Playwright automation framework. Features a robust Page Object Model (POM) architecture, integrated CLI for rapid scaffolding, automated logging with Chalk, and a high-level wrapper API for reliable web interactions and assertions. Built for scale, designed for speed.
+# Nebula 🌌 — Web Automation Framework (TypeScript + Playwright)
 
-🚀 Quick Start
+A lightweight, layered Page Object Model (POM) automation framework designed to be reusable across any web application. Nebula prioritizes minimal setup for consumers and a clear separation of responsibilities so teams can onboard quickly.
 
-Installation
+Key goals
+- Robust, language-agnostic test design for web automation ⚙️  
+- Layered POM (pages, actions, assertions) for clear responsibilities 🧩  
+- Minimal friction for users: run the provided CLI to configure environment without manual npm steps where possible 🚀
 
-Prepare your environment by installing dependencies and the Playwright browser binaries:
+---
 
-# Install core dependencies
+## Features ✨
+- TypeScript-first framework with Playwright integration
+- Layered structure:
+  - `/pages` — locator-only Page classes (class names end with `Page`)
+  - `/actions` — reusable business logic & workflows
+  - `/assertions` — custom validation helpers and expect wrappers
+  - `/utility` — config helpers and shared utilities
+  - `/utility/env` — environment JSON files (qa, staging, prod)
+  - `/tests` — `.spec.ts` test files
+  - `/reporting` — test results, logs, screenshots (git-ignored)
+  - `/bin` — CLI scaffolding (`nebula` command)
+- Zero-dependency CLI wrapper (requires Node) so users can run `nebula` without invoking npm directly
+- Playwright artifacts (traces, screenshots) directed to `/reporting`
+
+---
+
+## Project structure 📁
+Top-level layout (important folders):
+- pages/
+- actions/
+- assertions/
+- utility/
+  - env/ (qa.json, staging.json, prod.json)
+- tests/
+- reporting/ (ignored in git)
+- bin/ (nebula CLI wrapper)
+
+All Page classes use the `*Page.ts` suffix and contain locators only. Business logic belongs in `/actions`.
+
+---
+
+## Quick start (Windows) ⚡️
+
+Prerequisite: Node.js installed (v16+ recommended).
+
+1) Use the bundled CLI to set environment (no npm required):
+```powershell
+# From the repository root:
+.\bin\nebula.cmd env qa
+# or if bin is added to PATH:
+nebula env staging
+```
+
+This writes a small state file (`.nebula_env.json`) and the framework's TypeScript helpers will pick the selected environment automatically.
+
+2) Recommended: install framework dependencies for development & run tests (optional for users who want to run tests locally):
+```powershell
 npm install
+# install Playwright browsers (required if you run tests)
+npx playwright install
+# run tests
+npx playwright test
+```
 
-# Install Playwright browsers and system dependencies
-npx playwright install --with-deps
+Note: The CLI itself only requires Node at runtime; dependency installation is required only if you intend to run or develop tests locally.
 
-# Build the project
-npm run build
+---
 
+## Environment management 🌍
+- Switch environments with the CLI: `nebula env <qa|staging|prod>`
+- Config files live in `utility/env/*.json` and are consumed by `utility/config-helper.ts`
 
-🛠 CLI Reference
+---
 
-Nebula comes with a built-in CLI tool (nebula) to manage your workspace and scaffold components instantly.
+## Running tests & reporting 🧪
+- Playwright config writes artifacts to `/reporting`
+- Run tests:
+  - `npx playwright test` (recommended during development)
+- Generated HTML report lands inside `reporting/playwright-report` by default
 
-Command
+---
 
-Alias
+## Contributing & extending 🤝
+- Keep Page objects focused on selectors only
+- Put flows and orchestration inside `/actions`
+- Add reusable expects/wrappers to `/assertions`
+- Add new env JSON files to `/utility/env` and update `config-helper` if needed
+- Consider adding ESLint/Prettier and CI pipelines for consistent quality
 
-Description
+---
 
-nebula create-page <name>
+## Making `nebula` globally available (optional)
+Add the project's `bin` folder to your PATH (Windows System Environment Variables) to run `nebula` from anywhere:
+- Add `D:\Desktop\Nebula\bin` (or your project path) to PATH
+- Then run:
+```powershell
+nebula env qa
+```
 
-cp
+---
 
-Scaffolds a Page Object in pages/ and a Test Spec in tests/.
+## License & contact 📬
+- MIT — free to reuse and extend  
+For questions or help extending the initializer, open an issue or contribute a PR.
 
-nebula remove <name>
-
-rm
-
-Deletes the specified Page Object and Test folder.
-
-nebula scan
-
-s
-
-Checks the integrity of the project architecture.
-
-nebula status
-
--
-
-Displays a health report of core framework modules.
-
-nebula clean
-
--
-
-Danger: Resets the workspace by emptying pages and tests.
-
-🎮 Core API: Global Actions
-
-The Actions class provides a wrapper around Playwright interactions, adding automatic logging and standardized timeouts.
-
-Navigation & Interaction
-
-goto(url: string): Navigates to a URL and waits for networkidle.
-
-click(selector: string | Locator): Performs a click with automatic logging.
-
-doubleClick(selector: string): Performs a mouse double-click.
-
-hoverAndClick(hoverSelector, clickSelector): Hovers over one element and clicks another.
-
-clickInsideFrame(frameSelector, elementSelector): Interacts with elements inside an IFrame.
-
-Inputs & Keyboard
-
-type(selector, text, delay?): Fills an input field with optional delay.
-
-clearAndType(selector, text): Resets a field before entering new data.
-
-selectOption(selector, option): Selects dropdown values by label, value, or index.
-
-pressKey(key: string): Simulates keyboard presses (e.g., 'Enter', 'Tab').
-
-Advanced & Utilities
-
-dragAndDrop(source, target): Drags an element to a target location.
-
-waitForNewTab(action): Handles events that open new browser tabs.
-
-waitForState(selector, state): Waits for elements to be visible, hidden, or attached.
-
-takeScreenshot(name: string): Saves a full-page screenshot to the reporting directory.
-
-✅ Core API: Global Assertions
-
-The Assert class provides a readable, logged alternative to standard Playwright expectations.
-
-State Assertions
-
-toBeVisible(selector): Asserts element is visible (10s timeout).
-
-toBeHidden(selector): Asserts element is not present or hidden.
-
-toBeEnabled(selector) / toBeDisabled(selector): Checks element interactivity state.
-
-toBeEditable(selector): Verifies if an input field is editable.
-
-toBeChecked(selector): Checks the state of checkboxes or radio buttons.
-
-Content Assertions
-
-toHaveText(selector, text): Matches inner text exactly or via RegExp.
-
-toContainText(selector, text): Checks if the element contains a substring.
-
-toHaveValue(selector, value): Verifies the current value of form inputs.
-
-toHaveAttribute(selector, attr, value): Checks for specific HTML attributes (e.g., src, href).
-
-Page & API Assertions
-
-toHaveURL(url): Verifies the current browser URL.
-
-toHaveTitle(title): Verifies the page title.
-
-toHaveCount(selector, count): Asserts the number of elements found.
-
-toBeOK(response): Asserts that an API response status is between 200-299.
-
-🏛 Architecture
-
-Nebula follows a strict directory structure to ensure maintainability:
-
-├── actions/         # Global interaction wrappers
-├── assertions/      # Global assertion wrappers
-├── bin/             # CLI binary logic
-├── pages/           # Page Object classes (Scaffolded by CLI)
-├── tests/           # Test specifications (Scaffolded by CLI)
-├── utility/         # Helper functions and loggers
-└── playwright.config.ts
-
-
-👥 Authors
-
-Designed and Developed by Mustufa Qureshi and Abdul Kader Qureshi.
-
-License: MIT
+Happy testing! 🚀
