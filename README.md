@@ -2,10 +2,12 @@
 
 A lightweight, layered Page Object Model (POM) automation framework designed to be reusable across any web application. Nebula prioritizes minimal setup for consumers and a clear separation of responsibilities so teams can onboard quickly.
 
+Author: Abdul Kader Javed Qureshi — this framework is purely written by Abdul Kader Javed Qureshi. ✍️
+
 Key goals
-- Robust, language-agnostic test design for web automation ⚙️  
+- Robust, application-agnostic test design for web automation ⚙️  
 - Layered POM (pages, actions, assertions) for clear responsibilities 🧩  
-- Minimal friction for users: run the provided CLI to configure environment without manual npm steps where possible 🚀
+- Minimal friction for users: run a single setup command and everything is handled automatically 🚀
 
 ---
 
@@ -19,9 +21,25 @@ Key goals
   - `/utility/env` — environment JSON files (qa, staging, prod)
   - `/tests` — `.spec.ts` test files
   - `/reporting` — test results, logs, screenshots (git-ignored)
-  - `/bin` — CLI scaffolding (`nebula` command)
-- Zero-dependency CLI wrapper (requires Node) so users can run `nebula` without invoking npm directly
-- Playwright artifacts (traces, screenshots) directed to `/reporting`
+  - `/bin` — project initializer scaffolding
+- Single-step setup: one script installs dependencies, Playwright browsers, and optional helpers
+
+---
+
+## Important — One command setup ✅
+You do NOT need to run multiple npm commands. To prepare the project for first use, run only:
+
+```powershell
+npm run setup
+```
+
+What `npm run setup` does (examples — implemented in package.json):
+- Installs project dependencies (production + dev)
+- Installs Playwright browsers (`npx playwright install`)
+- Runs any post-install scaffolding and OS-specific setup
+- Prepares the reporting folder and sample artifacts
+
+After `npm run setup` completes, the framework is ready for development and testing.
 
 ---
 
@@ -34,7 +52,7 @@ Top-level layout (important folders):
   - env/ (qa.json, staging.json, prod.json)
 - tests/
 - reporting/ (ignored in git)
-- bin/ (nebula CLI wrapper)
+- bin/ (project initializer scaffolding)
 
 All Page classes use the `*Page.ts` suffix and contain locators only. Business logic belongs in `/actions`.
 
@@ -44,39 +62,28 @@ All Page classes use the `*Page.ts` suffix and contain locators only. Business l
 
 Prerequisite: Node.js installed (v16+ recommended).
 
-1) Use the bundled CLI to set environment (no npm required):
+1) Run the single setup command:
 ```powershell
 # From the repository root:
-.\bin\nebula.cmd env qa
-# or if bin is added to PATH:
-nebula env staging
+npm run setup
 ```
 
-This writes a small state file (`.nebula_env.json`) and the framework's TypeScript helpers will pick the selected environment automatically.
-
-2) Recommended: install framework dependencies for development & run tests (optional for users who want to run tests locally):
+2) (Optional) Run tests locally:
 ```powershell
-npm install
-# install Playwright browsers (required if you run tests)
-npx playwright install
-# run tests
+# only if you want to run tests locally after setup
 npx playwright test
 ```
-
-Note: The CLI itself only requires Node at runtime; dependency installation is required only if you intend to run or develop tests locally.
 
 ---
 
 ## Environment management 🌍
-- Switch environments with the CLI: `nebula env <qa|staging|prod>`
-- Config files live in `utility/env/*.json` and are consumed by `utility/config-helper.ts`
+- Environment config files live in `utility/env/*.json`.
+- The framework reads the active environment via `utility/config-helper.ts`. Switch logic is implemented in the helper and can be driven by the initializer or CI.
 
 ---
 
 ## Running tests & reporting 🧪
 - Playwright config writes artifacts to `/reporting`
-- Run tests:
-  - `npx playwright test` (recommended during development)
 - Generated HTML report lands inside `reporting/playwright-report` by default
 
 ---
@@ -87,16 +94,6 @@ Note: The CLI itself only requires Node at runtime; dependency installation is r
 - Add reusable expects/wrappers to `/assertions`
 - Add new env JSON files to `/utility/env` and update `config-helper` if needed
 - Consider adding ESLint/Prettier and CI pipelines for consistent quality
-
----
-
-## Making `nebula` globally available (optional)
-Add the project's `bin` folder to your PATH (Windows System Environment Variables) to run `nebula` from anywhere:
-- Add `D:\Desktop\Nebula\bin` (or your project path) to PATH
-- Then run:
-```powershell
-nebula env qa
-```
 
 ---
 
